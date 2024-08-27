@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<style>
+.button {
+    padding: 10px;
+    width: 50px;
+    height: 50px;
+}
+</style>
+<script>
+function add() {
+    const number1 = parseFloat(document.getElementById("number1").value);
+    const number2 = parseFloat(document.getElementById("number2").value);
+    const result = document.getElementById("result");
+
+    result.value = number1 + number2;
+}
+
+function minus() {
+    const number1 = parseFloat(document.getElementById("number1").value);
+    const number2 = parseFloat(document.getElementById("number2").value);
+    const result = document.getElementById("result");
+
+    result.value = number1 - number2;
+}
+
+function mul() {
+    const number1 = parseFloat(document.getElementById("number1").value);
+    const number2 = parseFloat(document.getElementById("number2").value);
+    const result = document.getElementById("result");
+
+    result.value = number1 * number2;
+}
+
+function div() {
+    const number1 = parseFloat(document.getElementById("number1").value);
+    const number2 = parseFloat(document.getElementById("number2").value);
+    const result = document.getElementById("result");
+
+    if (number2 !== 0) {
+        result.value = number1 / number2;
+    } else {
+        result.value = "NaN"; // 0으로 나눌 경우
+    }
+}
+</script>
+</head>
+<body>
+    숫자 1: <input type="text" id="number1" value="9"><br>
+    숫자 2: <input type="text" id="number2" value="6"><br>
+    <input type="button" value="+" onClick="add()" class="button">
+    <input type="button" value="-" onClick="minus()" class="button">
+    <input type="button" value="*" onClick="mul()" class="button">
+    <input type="button" value="/" onClick="div()" class="button"><br>
+    연산결과: <input type="text" id="result" value="">
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programmer Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="calculator">
+        <div class="display">
+            <input type="text" id="result" readonly>
+        </div>
+        <div class="radix-display">
+            <div>HEX: <span id="hex">0</span></div>
+            <div>DEC: <span id="dec">0</span></div>
+            <div>OCT: <span id="oct">0</span></div>
+            <div>BIN: <span id="bin">0</span></div>
+        </div>
+        <div class="buttons">
+            <button onclick="clearResult()">C</button>
+            <button onclick="deleteDigit()">⌫</button>
+            <button onclick="toggleSign()">+/-</button>
+            <button onclick="appendOperator('/')">/</button>
+            <button onclick="appendDigit('7')">7</button>
+            <button onclick="appendDigit('8')">8</button>
+            <button onclick="appendDigit('9')">9</button>
+            <button onclick="appendOperator('*')">*</button>
+            <button onclick="appendDigit('4')">4</button>
+            <button onclick="appendDigit('5')">5</button>
+            <button onclick="appendDigit('6')">6</button>
+            <button onclick="appendOperator('-')">-</button>
+            <button onclick="appendDigit('1')">1</button>
+            <button onclick="appendDigit('2')">2</button>
+            <button onclick="appendDigit('3')">3</button>
+            <button onclick="appendOperator('+')">+</button>
+            <button onclick="appendDigit('0')" class="zero">0</button>
+            <button onclick="appendDigit('.')">.</button>
+            <button onclick="calculateResult()">=</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
