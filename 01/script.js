@@ -68,3 +68,70 @@ function updateRadixDisplays(value) {
     document.getElementById('oct').textContent = decValue.toString(8);
     document.getElementById('bin').textContent = decValue.toString(2);
 }
+
+
+document.addEventListener('keydown', function(event) {
+    handleKeyPress(event);
+});
+
+function handleKeyPress(event) {
+    
+    if (event.key === 'c') {
+        clearResult();
+    }
+    else if (event.key === 'Backspace') {
+        deleteDigit();
+    }
+    else if (event.key === 'Enter') {
+        calculateResult();
+    }
+    else if (event.key === '+') {
+        appendOperator('+')
+    }
+    else if (event.key === '-') {
+        appendOperator('-')
+    }
+    else if (event.key === '/') {
+        appendOperator('/')
+    }
+    else if (event.key === '*') {
+        appendOperator('*')
+    }
+    else if (event.key === '1') {
+        appendDigit('1')
+    }
+    else if (event.key === '2') {
+        appendDigit('2')
+    }
+    else if (event.key === '3') {
+        appendDigit('3')
+    }
+    else if (event.key === '4') {
+        appendDigit('4')
+    }
+    else if (event.key === '5') {
+        appendDigit('5')
+    }
+    else if (event.key === '6') {
+        appendDigit('6')
+    }
+    else if (event.key === '7') {
+        appendDigit('7')
+    }
+    else if (event.key === '8') {
+        appendDigit('8')
+    }
+    else if (event.key === '9') {
+        appendDigit('9')
+    }
+    else if (event.key === '0') {
+        appendDigit('0')
+    }
+    else if (event.key === '.') {
+        appendDigit('.')
+    }
+    else if (event.key === '\\') {
+        toggleSign()
+    }
+}
+

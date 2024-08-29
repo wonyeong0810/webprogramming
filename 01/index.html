@@ -9,7 +9,7 @@
 <body>
     <div class="calculator">
         <div class="display">
-            <input type="text" id="result" readonly>
+            <input type="text" id="result" readonly value="0">
         </div>
         <div class="radix-display">
             <div>HEX: <span id="hex">0</span></div>
@@ -21,7 +21,7 @@
             <button onclick="clearResult()">C</button>
             <button onclick="deleteDigit()">⌫</button>
             <button onclick="toggleSign()">+/-</button>
-            <button onclick="appendOperator('/')">/</button>
+            <button onclick="appendOperator('/')">÷</button>
             <button onclick="appendDigit('7')">7</button>
             <button onclick="appendDigit('8')">8</button>
             <button onclick="appendDigit('9')">9</button>

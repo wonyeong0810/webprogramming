@@ -3,79 +3,79 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #f5f5f5;
+    background-color: #f0f2f5;
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .calculator {
-    width: 320px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.1);
+    width: 360px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
 .display {
-    background-color: #f0f0f0;
-    padding: 10px;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
+    background-color: #22252a;
+    padding: 20px;
     text-align: right;
     font-size: 24px;
-    box-sizing: border-box;
-    white-space: nowrap; /* Prevents wrapping */
-    overflow: hidden; /* Hides overflow */
-    text-overflow: ellipsis; /* Adds ellipsis when content is too large */
+    color: #ffffff;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
 }
 
 .display input {
     width: 100%;
     border: none;
     background-color: transparent;
-    font-size: 32px;
+    font-size: 40px;
+    color: #ffffff;
     text-align: right;
     outline: none;
-    white-space: nowrap; /* Prevents wrapping */
-    overflow: hidden; /* Hides overflow */
-    text-overflow: ellipsis; /* Adds ellipsis when content is too large */
     box-sizing: border-box;
 }
 
 .radix-display {
     display: grid;
-    grid-template-columns: 1fr; /* Create a single column */
-    padding: 10px;
-    background-color: #e9e9e9;
-    font-size: 14px;
-    text-align: left; /* Align text to the left */
+    grid-template-columns: 1fr;
+    padding: 15px 20px;
+    background-color: #2d2f36;
+    font-size: 16px;
+    color: #b5b7ba;
+    word-break: break-word;       /* 긴 단어를 줄바꿈 */
+    overflow-wrap: break-word;    /* 긴 단어가 줄을 넘을 경우 줄바꿈 */
+    white-space: normal;          /* 텍스트 줄바꿈 허용 */
 }
 
 .radix-display div {
     margin: 5px 0;
-    padding: 5px;
-    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #444;
 }
 
 .buttons {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
-    padding: 10px;
-    box-sizing: border-box;
+    padding: 20px;
+    background-color: #282c34;
 }
 
 button {
-    font-size: 18px;
-    padding: 15px;
+    font-size: 20px;
+    padding: 20px;
     border: none;
-    border-radius: 5px;
-    background-color: #e0e0e0;
+    border-radius: 8px;
+    background-color: #3b3f45;
+    color: #ffffff;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 button:hover {
-    background-color: #d0d0d0;
+    background-color: #4b4f55;
 }
 
 .zero {
@@ -89,4 +89,12 @@ button:last-child {
 
 button:last-child:hover {
     background-color: #0056b3;
+}
+
+button:active {
+    background-color: #666b72;
+}
+
+button:last-child:active {
+    background-color: #004291;
 }
