@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minesweeper Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        #timer {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        #game-board {
+            display: grid;
+            gap: 1px;
+            justify-content: center;
+            margin: 20px auto;
+        }
+
+        .cell {
+            width: 30px;
+            height: 30px;
+            background-color: #ddd;
+            border: 1px solid #aaa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .cell.clicked {
+            background-color: #eee;
+        }
+
+        .cell.txt-1 { color: blue; }
+        .cell.txt-2 { color: green; }
+        .cell.txt-3 { color: red; }
+        .cell.txt-4 { color: darkblue; }
+        .cell.txt-5 { color: brown; }
+        .cell.txt-6 { color: cyan; }
+        .cell.txt-7 { color: black; }
+        .cell.txt-8 { color: gray; }
+
+        .cell.m {
+            background-color: red;
+        }
+
+        .cell.flag::after {
+            content: '🚩';
+            position: absolute;
+            font-size: 20px;
+            top: 2px;
+            left: 2px;
+        }
+
+        .game-over, .game-win {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: white;
+            border: 2px solid black;
+            z-index: 10;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>
+        Minesweeper
+        <div id="timer">Time: 0s</div>
+    </h1>
+    <div id="game-board"></div>
+    <div id="game-over" class="game-over">
+        <h2>Game Over!</h2>
+        <button id="restart-btn">Restart</button>
+    </div>
+    <div id="game-win" class="game-win">
+        <h2>You Win!</h2>
+        <button id="restart-win-btn">Restart</button>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const INIT = {
+                board: [],                 // 게임 보드 배열
+                defRow: 10,                // 행의 수
+                defCol: 10,                // 열의 수
+                mineCount: 10,             // 지뢰 개수
+                totalCells: 100,           // 전체 셀 수
+                revealedCells: 0,          // 공개된 셀 수
+                flaggedCells: 0,           // 깃발이 꽂힌 셀 수
+                isGameOver: false,         // 게임 오버 상태
+                isGameWon: false,          // 게임 승리 상태
+                timeElapsed: 0,            // 경과 시간
+                timerInterval: null,       // 타이머 인터벌 ID
+                isTimerStarted: false      // 타이머 시작 여부
+            };
+
+            const board = document.getElementById('game-board');
+            const $td = [];
+            const gameOverDiv = document.getElementById('game-over');
+            const gameWinDiv = document.getElementById('game-win');
+            const restartBtn = document.getElementById('restart-btn');
+            const restartWinBtn = document.getElementById('restart-win-btn');
+            const timerDisplay = document.getElementById('timer');
+
+            // 게임 보드를 생성하는 함수
+            function create() {
+                board.style.gridTemplateColumns = `repeat(${INIT.defCol}, 30px)`;
+                for (let i = 0; i < INIT.defRow; i++) {
+                    INIT.board.push([]);
+                    for (let j = 0; j < INIT.defCol; j++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'cell';
+                        cell.dataset.index = i * INIT.defCol + j;
+                        cell.addEventListener('click', () => handleClick(cell, i, j));
+                        cell.addEventListener('contextmenu', (e) => handleRightClick(e, cell, i, j));
+                        board.appendChild(cell);
+                        $td.push(cell);
+                        INIT.board[i].push(0);
+                    }
+                }
+                place(INIT.mineCount);
+            }
+
+            // 지뢰를 무작위로 배치하는 함수
+            function place(mLen) {
+                let x, y;
+                for (let i = 0; i < mLen; i++) {
+                    let rd1 = Math.floor(Math.random() * INIT.defRow);
+                    let rd2 = Math.floor(Math.random() * INIT.defCol);
+                    if (INIT.board[rd1][rd2] === 'm') {
+                        i--;
+                    } else {
+                        INIT.board[rd1][rd2] = 'm';
+                        countMine(rd1, rd2);
+                    }
+                }
+                INIT.boardFlat = [].concat(...INIT.board);
+            }
+
+            // 지뢰 근처 셀에 숫자를 증가시키는 함수
+            function countMine(in1, in2) {
+                let iLen = in1 + 2;
+                let jLen = in2 + 2;
+                for (let i = in1 - 1; i < iLen; i++) {
+                    for (let j = in2 - 1; j < jLen; j++) {
+                        if (i < 0 || j < 0 || i >= INIT.board.length || j >= INIT.board[i].length || (i === in1 && j === in2)) {
+                            continue;
+                        }
+                        if (INIT.board[i][j] !== 'm') {
+                            INIT.board[i][j]++;
+                        }
+                    }
+                }
+            }
+
+            // 셀을 클릭했을 때 처리하는 함수
+            function handleClick(cell, x, y) {
+                if (INIT.isGameOver || INIT.isGameWon || cell.classList.contains('clicked') || cell.classList.contains('flag')) return;
+
+                // 타이머 시작
+                if (!INIT.isTimerStarted) {
+                    startTimer();
+                    INIT.isTimerStarted = true;
+                }
+
+                if (INIT.board[x][y] === 'm') {
+                    gameOver();
+                } else {
+                    revealCell(x, y);
+                    checkWin();
+                }
+            }
+
+            // 오른쪽 클릭으로 깃발을 표시하거나 제거하는 함수
+            function handleRightClick(e, cell, x, y) {
+                e.preventDefault(); // 기본 오른쪽 클릭 메뉴를 비활성화
+                if (INIT.isGameOver || INIT.isGameWon || cell.classList.contains('clicked')) return;
+
+                if (cell.classList.contains('flag')) {
+                    cell.classList.remove('flag');
+                    INIT.flaggedCells--;
+                } else {
+                    cell.classList.add('flag');
+                    INIT.flaggedCells++;
+                }
+            }
+
+            // 셀을 공개하는 함수
+            function revealCell(x, y) {
+                const index = x * INIT.defCol + y;
+                if ($td[index].classList.contains('clicked')) return;
+
+                $td[index].classList.add('clicked');
+                INIT.revealedCells++;
+                if (INIT.board[x][y] !== 0) {
+                    $td[index].classList.add(`txt-${INIT.board[x][y]}`);
+                    $td[index].textContent = INIT.board[x][y];
+                } else {
+                    INIT.board[x][y] = 'o';
+                    let iLen = x + 2;
+                    let jLen = y + 2;
+                    for (let i = x - 1; i < iLen; i++) {
+                        for (let j = y - 1; j < jLen; j++) {
+                            if (i < 0 || j < 0 || i >= INIT.board.length || j >= INIT.board[i].length || (i === x && j === y) || INIT.board[i][j] === 'o') {
+                                continue;
+                            }
+                            revealCell(i, j);
+                        }
+                    }
+                }
+            }
+
+            // 모든 셀을 공개하는 함수
+            function revealAll() {
+                for (let i = 0; i < INIT.defRow; i++) {
+                    for (let j = 0; j < INIT.defCol; j++) {
+                        const index = i * INIT.defCol + j;
+                        if (INIT.board[i][j] === 'm') {
+                            $td[index].classList.add('m');
+                        } else if (INIT.board[i][j] !== 'o') {
+                            $td[index].classList.add(`txt-${INIT.board[i][j]}`);
+                            $td[index].textContent = INIT.board[i][j];
+                        }
+                    }
+                }
+            }
+
+            // 승리 조건을 확인하는 함수
+            function checkWin() {
+                const totalNonMineCells = INIT.totalCells - INIT.mineCount;
+                if (INIT.revealedCells === totalNonMineCells) {
+                    gameWin();
+                }
+            }
+
+            // 게임 오버 처리 함수
+            function gameOver() {
+                INIT.isGameOver = true;
+                stopTimer();
+                revealAll();
+                gameOverDiv.style.display = 'block';
+            }
+
+            // 게임 승리 처리 함수
+            function gameWin() {
+                INIT.isGameWon = true;
+                stopTimer();
+                revealAll();
+                gameWinDiv.style.display = 'block';
+            }
+
+            // 게임을 재시작하는 함수
+            function restartGame() {
+                // 타이머 초기화
+                stopTimer();
+                INIT.timeElapsed = 0;
+                timerDisplay.textContent = `Time: ${INIT.timeElapsed}s`;
+                INIT.isTimerStarted = false;
+
+                INIT.board = [];
+                INIT.isGameOver = false;
+                INIT.isGameWon = false;
+                INIT.revealedCells = 0;
+                INIT.flaggedCells = 0;
+                board.innerHTML = '';
+                $td.length = 0;
+                create();
+                gameOverDiv.style.display = 'none';
+                gameWinDiv.style.display = 'none';
+            }
+
+            // 타이머 시작 함수
+            function startTimer() {
+                INIT.timerInterval = setInterval(() => {
+                    INIT.timeElapsed++;
+                    timerDisplay.textContent = `Time: ${INIT.timeElapsed}s`;
+                }, 1000);
+            }
+
+            // 타이머 중지 함수
+            function stopTimer() {
+                if (INIT.timerInterval) {
+                    clearInterval(INIT.timerInterval);
+                    INIT.timerInterval = null;
+                }
+            }
+
+            restartBtn.addEventListener('click', restartGame);
+            restartWinBtn.addEventListener('click', restartGame);
+
+            // 초기 게임 보드 생성
+            create();
+        });
+    </script>
+</body>
+</html>
